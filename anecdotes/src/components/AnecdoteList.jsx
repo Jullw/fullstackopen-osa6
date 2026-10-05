@@ -1,18 +1,28 @@
-import { useAnecdotesActions, useAnecdotes } from "../store";
+import {
+  useAnecdotesActions,
+  useAnecdotes,
+  useNotificationActions,
+} from "../store";
 
 const AnecdoteList = () => {
   const anecdotes = useAnecdotes();
   const { vote } = useAnecdotesActions();
 
+  const { setNotification } = useNotificationActions();
+
+  const handleVote = async (anecdote) => {
+    await vote(anecdote.id);
+    setNotification(`you voted '${anecdote.content}'`, 5);
+  };
+
   return (
     <>
-      <h2>Anecdotes</h2>
       {anecdotes.map((anecdote) => (
         <div key={anecdote.id}>
           <div>{anecdote.content}</div>
           <div>
             has {anecdote.votes}
-            <button onClick={() => vote(anecdote.id)}>vote</button>
+            <button onClick={() => handleVote(anecdote)}>vote</button>
           </div>
         </div>
       ))}

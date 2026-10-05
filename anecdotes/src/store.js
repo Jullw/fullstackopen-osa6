@@ -1,4 +1,5 @@
 import { create } from "zustand";
+import { useShallow } from "zustand/react/shallow";
 import anecdoteService from "./services/anecdotes";
 
 const useAnecdoteStore = create((set, get) => ({
@@ -48,3 +49,32 @@ export const useAnecdotes = () => {
 export const useFilter = () => useAnecdoteStore((state) => state.filter);
 export const useAnecdotesActions = () =>
   useAnecdoteStore((state) => state.actions);
+
+let notificationTimeout;
+
+const useNotificationStore = create((set) => ({
+  show: false,
+  text: "",
+  duration: 0,
+  actions: {
+    setNotification: (text, duration) => {
+      clearTimeout(notificationTimeout);
+      set(() => ({ show: true, text, duration }));
+      notificationTimeout = setTimeout(() => {
+        set(() => ({ show: false, text: "", duration: 0 }));
+      }, duration * 1000);
+    },
+  },
+}));
+
+export const useNotificationValues = () =>
+  useNotificationStore(
+    useShallow((state) => ({
+      show: state.show,
+      text: state.text,
+      duration: state.duration,
+    })),
+  );
+
+export const useNotificationActions = () =>
+  useNotificationStore((state) => state.actions);
