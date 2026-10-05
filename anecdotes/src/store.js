@@ -36,7 +36,9 @@ const useAnecdoteStore = create((set, get) => ({
     setFilter: (keyword) => set(() => ({ filter: keyword })),
     initialize: async () => {
       const anecdotes = await anecdoteService.getAll();
-      set(() => ({ anecdotes }));
+      set(() => ({
+        anecdotes: anecdotes.toSorted((a, b) => b.votes - a.votes),
+      }));
     },
   },
 }));

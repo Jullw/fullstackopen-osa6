@@ -15,6 +15,7 @@ const AnecdoteList = () => {
     setNotification(`you voted '${anecdote.content}'`, 5);
   };
   const deleteAnecdote = async (anecdote) => {
+    if (anecdote.votes > 0) return;
     await remove(anecdote.id);
     setNotification(`anecdote deleted: '${anecdote.content}'`, 5);
   };
@@ -27,7 +28,9 @@ const AnecdoteList = () => {
           <div>
             has {anecdote.votes}
             <button onClick={() => handleVote(anecdote)}>vote</button>
-            <button onClick={() => deleteAnecdote(anecdote)}>delete</button>
+            {anecdote.votes === 0 && (
+              <button onClick={() => deleteAnecdote(anecdote)}>delete</button>
+            )}
           </div>
         </div>
       ))}
