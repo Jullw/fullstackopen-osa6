@@ -1,11 +1,8 @@
-import { useAnecdotes } from "./store"
+import { useAnecdotes, useAnecdotesActions } from "./store";
 
 const App = () => {
-  const anecdotes = useAnecdotes()
-
-  const vote = (id) => {
-    console.log("vote", id)
-  }
+  const anecdotes = useAnecdotes();
+  const { vote } = useAnecdotesActions();
 
   return (
     <div>
@@ -27,7 +24,7 @@ const App = () => {
         <button>create</button>
       </form>
     </div>
-  )
-}
+  );
+};
 
-export default App
+export default App;
