@@ -1,20 +1,22 @@
 import { create } from "zustand";
 import anecdoteService from "./services/anecdotes";
 
-const useAnecdoteStore = create((set) => ({
+const useAnecdoteStore = create((set, get) => ({
   anecdotes: [],
   filter: "",
   actions: {
-    vote: (id) =>
+    vote: async (id) => {
+      const anecdote = get().anecdotes.find((a) => a.id === id);
+      const updated = await anecdoteService.update(id, {
+        ...anecdote,
+        votes: anecdote.votes + 1,
+      });
       set((state) => ({
         anecdotes: state.anecdotes
-          .map((anecdote) =>
-            anecdote.id === id
-              ? { ...anecdote, votes: anecdote.votes + 1 }
-              : anecdote,
-          )
+          .map((anecdote) => (anecdote.id === id ? updated : anecdote))
           .toSorted((a, b) => b.votes - a.votes),
-      })),
+      }));
+    },
 
     create: async (content) => {
       const newAnecdote = await anecdoteService.createNew(content);
