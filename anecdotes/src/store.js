@@ -1,11 +1,5 @@
 import { create } from "zustand";
-const getId = () => (100000 * Math.random()).toFixed(0);
-
-const asObject = (anecdote) => ({
-  content: anecdote,
-  id: getId(),
-  votes: 0,
-});
+import anecdoteService from "./services/anecdotes";
 
 const useAnecdoteStore = create((set) => ({
   anecdotes: [],
@@ -22,10 +16,12 @@ const useAnecdoteStore = create((set) => ({
           .toSorted((a, b) => b.votes - a.votes),
       })),
 
-    create: (content) =>
+    create: async (content) => {
+      const newAnecdote = await anecdoteService.createNew(content);
       set((state) => ({
-        anecdotes: [...state.anecdotes, asObject(content)],
-      })),
+        anecdotes: [...state.anecdotes, newAnecdote],
+      }));
+    },
 
     setFilter: (keyword) => set(() => ({ filter: keyword })),
     initialize: async () => {
