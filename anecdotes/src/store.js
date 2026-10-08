@@ -2,6 +2,13 @@ import { create } from "zustand";
 import { useShallow } from "zustand/react/shallow";
 import anecdoteService from "./services/anecdotes";
 
+// const logger = (config) => (set, get) =>
+//   config((...args) => {
+//     console.log("prev state", get());
+//     set(...args);
+//     console.log("next state", get());
+//   }, get);
+
 const useAnecdoteStore = create((set, get) => ({
   anecdotes: [],
   filter: "",
@@ -42,6 +49,8 @@ const useAnecdoteStore = create((set, get) => ({
     },
   },
 }));
+
+export default useAnecdoteStore;
 
 export const useAnecdotes = () => {
   const anecdotes = useAnecdoteStore((state) => state.anecdotes);
