@@ -75,3 +75,36 @@ describe("useFilter", () => {
     expect(anecdotesResult.current).toEqual([mockAnecdotes[0]]);
   });
 });
+
+describe("useActions", () => {
+  it("vote for an anecdote", async () => {
+    const mockAnecdotes = [
+      { id: 1, content: "Test", votes: 3 },
+      { id: 2, content: "another", votes: 0 },
+      { id: 3, content: "tesit", votes: 3 },
+    ];
+    const updatedAnecdote = { ...mockAnecdotes[2], votes: 4 };
+    anecdotesService.getAll.mockResolvedValue(mockAnecdotes);
+    anecdotesService.update.mockResolvedValue(updatedAnecdote);
+
+    const { result } = renderHook(() => useAnecdotesActions());
+
+    await act(async () => {
+      await result.current.initialize();
+      await result.current.vote(mockAnecdotes[2].id);
+    });
+
+    expect(anecdotesService.update).toHaveBeenCalledWith(
+      mockAnecdotes[2].id,
+      updatedAnecdote,
+    );
+
+    const { result: anecdotesResult } = renderHook(() => useAnecdotes());
+    expect(anecdotesResult.current[0].votes).toEqual(4);
+    expect(anecdotesResult.current).toEqual([
+      updatedAnecdote,
+      mockAnecdotes[0],
+      mockAnecdotes[1],
+    ]);
+  });
+});
